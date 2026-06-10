@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { User } from '../../types'
-import { CheckCircle, XCircle, User as UserIcon, Search, Filter } from 'lucide-react'
+import { CheckCircle, XCircle, User as  Search, Filter } from 'lucide-react'
 
 export default function ManageUsers() {
   const [users, setUsers] = useState<User[]>([])

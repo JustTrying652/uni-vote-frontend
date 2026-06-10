@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
-import { Plus, ChevronDown } from 'lucide-react'
+import { Plus } from 'lucide-react'
 
 const statusConfig: Record<string, { label: string; classes: string }> = {
   draft:   { label: 'Draft',             classes: 'bg-gray-100 text-gray-600' },

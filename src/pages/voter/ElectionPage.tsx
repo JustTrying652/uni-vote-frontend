@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
-import type { Election, Candidate } from '../../types'
-import { ChevronLeft, User, Trophy } from 'lucide-react'
+import type { Election } from '../../types'
+import { ChevronLeft, Trophy } from 'lucide-react'
 
 export default function ElectionPage() {
   const { id } = useParams()
