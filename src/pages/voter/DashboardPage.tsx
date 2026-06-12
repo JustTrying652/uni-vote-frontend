@@ -8,10 +8,12 @@ import { Vote, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 
 function StatusBadge({ status }: { status: Election['status'] }) {
   const config = {
-    draft:   { label: 'Draft',            classes: 'bg-gray-100 text-gray-600' },
-    open:    { label: 'Open',             classes: 'bg-green-100 text-green-700' },
-    closed:  { label: 'Closed',           classes: 'bg-yellow-100 text-yellow-700' },
-    results: { label: 'Results Out',      classes: 'bg-blue-100 text-blue-700' },
+    draft:                { label: 'Draft',                classes: 'bg-gray-100 text-gray-600' },
+    applications_open:    { label: 'Applications Open',    classes: 'bg-blue-100 text-blue-700' },
+    applications_closed:  { label: 'Applications Closed',  classes: 'bg-purple-100 text-purple-700' },
+    voting_open:          { label: 'Voting Open',          classes: 'bg-green-100 text-green-700' },
+    voting_closed:        { label: 'Voting Closed',        classes: 'bg-yellow-100 text-yellow-700' },
+    results:              { label: 'Results Out',          classes: 'bg-orange-100 text-orange-700' },
   }
   const { label, classes } = config[status]
   return (
@@ -77,9 +79,9 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-gray-900">
-                  {elections.filter((e) => e.status === 'open').length}
+                  {elections.filter((e) => e.status === 'applications_open').length}
                 </p>
-                <p className="text-xs text-gray-500">Active Elections</p>
+                <p className="text-xs text-gray-500">Applications Open</p>
               </div>
             </div>
           </div>
@@ -138,7 +140,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="ml-6 flex gap-2">
-  {election.status === 'open' && (
+  {election.status === 'applications_open' && (
     <button
       onClick={() => navigate(`/elections/${election.id}/apply`)}
       className="px-4 py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-medium rounded-lg transition-colors"
@@ -146,14 +148,22 @@ export default function DashboardPage() {
       Apply
     </button>
   )}
-  <button
-    onClick={() => navigate(
-      election.status === 'open' ? `/elections/${election.id}/ballot` : `/elections/${election.id}`
-    )}
-    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
-  >
-    {election.status === 'open' ? 'Vote Now' : 'View'}
-  </button>
+  {election.status === 'voting_open' && (
+    <button
+      onClick={() => navigate(`/elections/${election.id}/ballot`)}
+      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+    >
+      Vote Now
+    </button>
+  )}
+  {(election.status === 'voting_closed' || election.status === 'results') && (
+    <button
+      onClick={() => navigate(`/elections/${election.id}`)}
+      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+    >
+      {election.status === 'results' ? 'View Results' : 'View'}
+    </button>
+  )}
 </div>
               </div>
             ))}

@@ -5,20 +5,30 @@ import type { Election } from '../../types'
 import { Plus } from 'lucide-react'
 
 const statusConfig: Record<string, { label: string; classes: string }> = {
-  draft:   { label: 'Draft',             classes: 'bg-gray-100 text-gray-600' },
-  open:    { label: 'Open',              classes: 'bg-green-100 text-green-700' },
-  closed:  { label: 'Closed',            classes: 'bg-yellow-100 text-yellow-700' },
-  results: { label: 'Results Published', classes: 'bg-blue-100 text-blue-700' },
+  draft:                { label: 'Draft',                classes: 'bg-gray-100 text-gray-600' },
+  applications_open:    { label: 'Applications Open',    classes: 'bg-blue-100 text-blue-700' },
+  applications_closed:  { label: 'Applications Closed',  classes: 'bg-purple-100 text-purple-700' },
+  voting_open:          { label: 'Voting Open',          classes: 'bg-green-100 text-green-700' },
+  voting_closed:        { label: 'Voting Closed',        classes: 'bg-yellow-100 text-yellow-700' },
+  results:              { label: 'Results Published',    classes: 'bg-orange-100 text-orange-700' },
+  // legacy statuses
+  open:                 { label: 'Open',                 classes: 'bg-green-100 text-green-700' },
+  closed:               { label: 'Closed',               classes: 'bg-yellow-100 text-yellow-700' },
 }
 
 const nextAction: Record<string, { label: string; action: string; classes: string } | null> = {
-  draft:   { label: 'Open Election',      action: 'open',    classes: 'bg-green-600 hover:bg-green-700 text-white' },
-  open:    { label: 'Close Election',     action: 'close',   classes: 'bg-yellow-500 hover:bg-yellow-600 text-white' },
-  closed:  { label: 'Publish Results',   action: 'publish', classes: 'bg-blue-600 hover:bg-blue-700 text-white' },
-  results: null,
+  draft:                { label: 'Open Applications', action: 'open_applications',  classes: 'bg-blue-600 hover:bg-blue-700 text-white' },
+  applications_open:    { label: 'Close Applications', action: 'close_applications', classes: 'bg-purple-600 hover:bg-purple-700 text-white' },
+  applications_closed:  { label: 'Open Voting',        action: 'open_voting',        classes: 'bg-green-600 hover:bg-green-700 text-white' },
+  voting_open:          { label: 'Close Voting',       action: 'close_voting',       classes: 'bg-yellow-500 hover:bg-yellow-600 text-white' },
+  voting_closed:        { label: 'Publish Results',    action: 'publish',            classes: 'bg-orange-600 hover:bg-orange-700 text-white' },
+  results:              null,
 }
 
+
 export default function ManageElections() {
+  const [formLoading, setFormLoading] = useState(false)
+  const [positionLoading, setPositionLoading] = useState(false)
   const [elections, setElections] = useState<Election[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -42,34 +52,40 @@ export default function ManageElections() {
   useEffect(() => { fetchElections() }, [])
 
   const handleCreateElection = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setFormError('')
-    try {
-      await api.post('/elections/create/', form)
-      setShowForm(false)
-      setForm({ title: '', description: '', academic_year: '', start_time: '', end_time: '' })
-      fetchElections()
-    } catch (err: any) {
-      const data = err.response?.data
-      setFormError(Object.values(data).flat().join(' ') || 'Failed to create election')
-    }
+  e.preventDefault()
+  setFormError('')
+  setFormLoading(true)
+  try {
+    await api.post('/elections/create/', form)
+    setShowForm(false)
+    setForm({ title: '', description: '', academic_year: '', start_time: '', end_time: '' })
+    fetchElections()
+  } catch (err: any) {
+    const data = err.response?.data
+    setFormError(Object.values(data).flat().join(' ') || 'Failed to create election')
+  } finally {
+    setFormLoading(false)
   }
+}
 
   const handleAddPosition = async (e: React.FormEvent, electionId: number) => {
-    e.preventDefault()
-    try {
-      await api.post(`/elections/${electionId}/positions/`, {
-        ...positionForm,
-        order: parseInt(positionForm.order),
-        max_votes: 1,
-      })
-      setShowPositionForm(null)
-      setPositionForm({ title: '', description: '', order: '1' })
-      fetchElections()
-    } catch (err) {
-      console.error(err)
-    }
+  e.preventDefault()
+  setPositionLoading(true)
+  try {
+    await api.post(`/elections/${electionId}/positions/`, {
+      ...positionForm,
+      order: parseInt(positionForm.order),
+      max_votes: 1,
+    })
+    setShowPositionForm(null)
+    setPositionForm({ title: '', description: '', order: '1' })
+    fetchElections()
+  } catch (err) {
+    console.error(err)
+  } finally {
+    setPositionLoading(false)
   }
+}
 
   const handleStatusChange = async (electionId: number, action: string) => {
     setActionLoading(electionId)
@@ -82,7 +98,15 @@ export default function ManageElections() {
       setActionLoading(null)
     }
   }
-
+  const handleDelete = async (electionId: number, title: string) => {
+    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
+    try {
+      await api.delete(`/elections/${electionId}/delete/`)
+      fetchElections()
+    } catch (err: any) {
+      alert(err.response?.data?.error || 'Failed to delete election.')
+    }
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -169,9 +193,10 @@ export default function ManageElections() {
               <div className="flex gap-3 pt-2">
                 <button
                   type="submit"
+                  disabled={formLoading}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
                 >
-                  Create Election
+                  {formLoading ? 'creating...' : 'create'}
                 </button>
                 <button
                   type="button"
@@ -195,30 +220,41 @@ export default function ManageElections() {
             {elections.map((election) => (
               <div key={election.id} className="bg-white rounded-2xl border border-gray-100 p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-semibold text-gray-900">{election.title}</h3>
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusConfig[election.status].classes}`}>
-                        {statusConfig[election.status].label}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-500">{election.description}</p>
-                    <div className="flex gap-4 text-xs text-gray-400 mt-2">
-                      <span>{election.positions.length} positions</span>
-                      <span>{election.total_voters} voters</span>
-                      <span>{new Date(election.start_time).toLocaleString()} → {new Date(election.end_time).toLocaleString()}</span>
-                    </div>
-                  </div>
-                  {nextAction[election.status] && (
-                    <button
-                      onClick={() => handleStatusChange(election.id, nextAction[election.status]!.action)}
-                      disabled={actionLoading === election.id}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${nextAction[election.status]!.classes}`}
-                    >
-                      {actionLoading === election.id ? 'Processing...' : nextAction[election.status]!.label}
-                    </button>
-                  )}
-                </div>
+  <div>
+    <div className="flex items-center gap-3 mb-1">
+      <h3 className="font-semibold text-gray-900">{election.title}</h3>
+      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusConfig[election.status]?.classes}`}>
+        {statusConfig[election.status]?.label}
+      </span>
+    </div>
+    <p className="text-sm text-gray-500">{election.description}</p>
+    <div className="flex gap-4 text-xs text-gray-400 mt-2">
+      <span>{election.positions.length} positions</span>
+      <span>{election.total_voters} voters</span>
+      <span>{new Date(election.start_time).toLocaleString()} → {new Date(election.end_time).toLocaleString()}</span>
+    </div>
+  </div>
+  <div className="flex gap-2 flex-shrink-0">
+    {['draft', 'applications_open', 'applications_closed'].includes(election.status) && (
+      <button
+        onClick={() => handleDelete(election.id, election.title)}
+        className="px-3 py-2 rounded-lg text-sm font-medium bg-red-50 hover:bg-red-100 text-red-600 transition-colors"
+      >
+        Delete
+      </button>
+    )}
+    {nextAction[election.status] && (
+      <button
+        onClick={() => handleStatusChange(election.id, nextAction[election.status]!.action)}
+        disabled={actionLoading === election.id}
+        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${nextAction[election.status]!.classes}`}
+      >
+        {actionLoading === election.id ? 'Processing...' : nextAction[election.status]!.label}
+      </button>
+    )}
+  </div>
+</div>
+                
 
                 {/* Positions */}
                 {election.positions.length > 0 && (
@@ -258,8 +294,12 @@ export default function ManageElections() {
                           />
                         </div>
                         <div className="flex gap-2">
-                          <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                            Add
+                          <button 
+                            type="submit" 
+                            disabled={positionLoading}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                          >
+                            {positionLoading ? 'adding...' : 'add'}
                           </button>
                           <button type="button" onClick={() => setShowPositionForm(null)} className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
                             Cancel

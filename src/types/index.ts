@@ -38,10 +38,11 @@ export interface Election {
   title: string
   description: string
   academic_year: string
-  status: 'draft' | 'open' | 'closed' | 'results'
+  status: 'draft' | 'applications_open' | 'applications_closed' | 'voting_open' | 'voting_closed' | 'results'
   start_time: string
   end_time: string
   is_active: boolean
+  applications_active: boolean
   positions: Position[]
   total_voters: number
   created_at: string

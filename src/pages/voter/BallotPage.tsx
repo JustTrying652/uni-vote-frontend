@@ -235,32 +235,55 @@ export default function BallotPage() {
 
           {/* Navigation */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <button
-              onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
-              disabled={currentStep === 0}
-              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-30 transition-colors"
-            >
-              <ChevronLeft size={16} /> Previous
-            </button>
+  <button
+    onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+    disabled={currentStep === 0}
+    className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-30 transition-colors"
+  >
+    <ChevronLeft size={16} /> Previous
+  </button>
 
-            {alreadyVoted ? (
-              <button
-                onClick={() => currentStep < totalSteps - 1 ? setCurrentStep((s) => s + 1) : setSubmitted(true)}
-                className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors"
-              >
-                {currentStep < totalSteps - 1 ? <>Next <ChevronRight size={16} /></> : 'Finish'}
-              </button>
-            ) : (
-              <button
-                onClick={handleSubmitVote}
-                disabled={!selections[currentPosition?.id] || submitting}
-                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors"
-              >
-                {submitting ? 'Submitting...' : currentStep < totalSteps - 1 ? 'Vote & Continue' : 'Submit Final Vote'}
-                {!submitting && <ChevronRight size={16} />}
-              </button>
-            )}
-          </div>
+  <div className="flex gap-2">
+    {/* Skip button — only show if not already voted and no selection made */}
+    {!alreadyVoted && currentStep < totalSteps - 1 && (
+      <button
+        onClick={() => setCurrentStep((s) => s + 1)}
+        className="flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 px-4 py-2.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+      >
+        Skip
+      </button>
+    )}
+
+    {alreadyVoted ? (
+      <button
+        onClick={() => currentStep < totalSteps - 1 ? setCurrentStep((s) => s + 1) : setSubmitted(true)}
+        className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium transition-colors"
+      >
+        {currentStep < totalSteps - 1 ? <>Next <ChevronRight size={16} /></> : 'Finish'}
+      </button>
+    ) : (
+      <div className="flex gap-2">
+        {/* Final step skip */}
+        {!alreadyVoted && currentStep === totalSteps - 1 && !selections[currentPosition?.id] && (
+          <button
+            onClick={() => setSubmitted(true)}
+            className="text-sm text-gray-400 hover:text-gray-600 px-4 py-2.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+          >
+            Skip & Finish
+          </button>
+        )}
+        <button
+          onClick={handleSubmitVote}
+          disabled={!selections[currentPosition?.id] || submitting}
+          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors"
+        >
+          {submitting ? 'Submitting...' : currentStep < totalSteps - 1 ? 'Vote & Continue' : 'Submit Vote'}
+          {!submitting && <ChevronRight size={16} />}
+        </button>
+      </div>
+    )}
+  </div>
+</div>
         </div>
       </div>
     </div>

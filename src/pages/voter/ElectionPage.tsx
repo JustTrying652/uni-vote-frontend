@@ -59,11 +59,11 @@ export default function ElectionPage() {
             </div>
             <span className={`text-xs font-medium px-3 py-1 rounded-full ${
               election?.status === 'results' ? 'bg-blue-100 text-blue-700' :
-              election?.status === 'closed' ? 'bg-yellow-100 text-yellow-700' :
+              election?.status === 'voting_closed' ? 'bg-yellow-100 text-yellow-700' :
               'bg-gray-100 text-gray-600'
             }`}>
               {election?.status === 'results' ? 'Results Published' :
-               election?.status === 'closed' ? 'Closed' : election?.status}
+               election?.status === 'voting_closed' ? 'Closed' : election?.status}
             </span>
           </div>
           <p className="text-gray-600 text-sm">{election?.description}</p>

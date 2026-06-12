@@ -18,16 +18,21 @@ export default function AdminDashboard() {
 
   const stats = {
     total: elections.length,
-    active: elections.filter((e) => e.status === 'open').length,
-    closed: elections.filter((e) => e.status === 'closed').length,
+    active: elections.filter((e) => e.status === 'voting_open').length,
+    closed: elections.filter((e) => e.status === 'voting_closed').length,
     results: elections.filter((e) => e.status === 'results').length,
   }
 
   const statusConfig: Record<string, { label: string; classes: string }> = {
-    draft:   { label: 'Draft',            classes: 'bg-gray-100 text-gray-600' },
-    open:    { label: 'Open',             classes: 'bg-green-100 text-green-700' },
-    closed:  { label: 'Closed',           classes: 'bg-yellow-100 text-yellow-700' },
-    results: { label: 'Results Published', classes: 'bg-blue-100 text-blue-700' },
+    draft:                { label: 'Draft',                classes: 'bg-gray-100 text-gray-600' },
+    applications_open:    { label: 'Applications Open',    classes: 'bg-blue-100 text-blue-700' },
+    applications_closed:  { label: 'Applications Closed',  classes: 'bg-purple-100 text-purple-700' },
+    voting_open:          { label: 'Voting Open',          classes: 'bg-green-100 text-green-700' },
+    voting_closed:        { label: 'Voting Closed',        classes: 'bg-yellow-100 text-yellow-700' },
+    results:              { label: 'Results Published',    classes: 'bg-orange-100 text-orange-700' },
+    // legacy statuses
+    open:                 { label: 'Open',                 classes: 'bg-green-100 text-green-700' },
+    closed:               { label: 'Closed',               classes: 'bg-yellow-100 text-yellow-700' },
   }
 
   return (
