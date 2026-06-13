@@ -70,30 +70,48 @@ export default function AdminDashboard() {
 
         {/* Quick actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <button
-  onClick={() => navigate('/admin/elections')}
-  className="bg-[#1e3a5f] hover:bg-[#162d4a] text-white rounded-lg p-5 text-left transition-colors"
->
-  <Vote size={22} className="mb-3 text-[#c9a84c]" />
-  <p className="font-semibold text-sm">Manage Elections</p>
-  <p className="text-blue-200 text-xs mt-1">Create elections, add positions, open and close voting</p>
-</button>
-<button
-  onClick={() => navigate('/admin/candidates')}
-  className="bg-white hover:bg-gray-50 border border-gray-200 shadow-sm rounded-lg p-5 text-left transition-colors"
->
-  <Users size={22} className="mb-3 text-[#1e3a5f]" />
-  <p className="font-semibold text-sm text-gray-900">Manage Candidates</p>
-  <p className="text-gray-500 text-xs mt-1">Review and approve candidate applications</p>
-</button>
-<button
-  onClick={() => navigate('/admin/users')}
-  className="bg-white hover:bg-gray-50 border border-gray-200 shadow-sm rounded-lg p-5 text-left transition-colors"
->
-  <Users size={22} className="mb-3 text-[#1e3a5f]" />
-  <p className="font-semibold text-sm text-gray-900">Manage Users</p>
-  <p className="text-gray-500 text-xs mt-1">Verify students and manage voter eligibility</p>
-</button>
+          {[
+  {
+    to: '/admin/elections',
+    icon: Vote,
+    label: 'Manage Elections',
+    desc: 'Create elections, add positions, open and close voting',
+    primary: true,
+  },
+  {
+    to: '/admin/candidates',
+    icon: Users,
+    label: 'Manage Candidates',
+    desc: 'Review and approve candidate applications',
+    primary: false,
+  },
+  {
+    to: '/admin/users',
+    icon: Users,
+    label: 'Manage Users',
+    desc: 'Verify students and manage voter eligibility',
+    primary: false,
+  },
+].map(({ to, icon: Icon, label, desc, primary }) => (
+  <button
+    key={to}
+    onClick={() => navigate(to)}
+    className={`rounded-lg p-5 text-left transition-all group ${
+      primary
+        ? 'bg-[#1e3a5f] hover:bg-[#162d4a] text-white'
+        : 'bg-white border border-gray-200 shadow-sm hover:border-[#1e3a5f] hover:shadow-md text-gray-900'
+    }`}
+  >
+    <Icon
+      size={22}
+      className={`mb-3 transition-colors ${
+        primary ? 'text-[#c9a84c]' : 'text-[#1e3a5f]'
+      }`}
+    />
+    <p className="font-semibold text-sm">{label}</p>
+    <p className={`text-xs mt-1 ${primary ? 'text-blue-200' : 'text-gray-500'}`}>{desc}</p>
+  </button>
+))}
         </div>
 
         {/* Elections list */}
