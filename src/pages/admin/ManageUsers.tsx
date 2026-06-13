@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { User } from '../../types'
 import { CheckCircle, XCircle, User as  Search, Filter } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 export default function ManageUsers() {
   const [users, setUsers] = useState<User[]>([])
@@ -60,14 +61,14 @@ export default function ManageUsers() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f9fb]">
       <Navbar />
+      <PageHeader
+        title="Manage Users"
+        subtitle="Verify students to allow them to vote"
+        breadcrumb="Administration . Users"
+      />
       <div className="max-w-5xl mx-auto px-6 py-8">
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
-          <p className="text-gray-500 text-sm mt-1">Verify students to allow them to vote</p>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">

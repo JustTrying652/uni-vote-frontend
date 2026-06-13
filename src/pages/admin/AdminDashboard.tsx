@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
 import { Vote, Users, CheckCircle, BarChart3, ChevronRight } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -36,14 +37,14 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f9fb]">
       <Navbar />
+      <PageHeader
+        title="Admin Dashboard"
+        subtitle="Manage elections, candidates, and users"
+        breadcrumb="Admin"
+      />
       <div className="max-w-6xl mx-auto px-6 py-8">
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage elections, candidates, and results</p>
-        </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
@@ -53,7 +54,7 @@ export default function AdminDashboard() {
             { label: 'Closed', value: stats.closed, icon: Users, color: 'bg-yellow-100 text-yellow-600' },
             { label: 'Results Out', value: stats.results, icon: BarChart3, color: 'bg-purple-100 text-purple-600' },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-xl border border-gray-100 p-5">
+            <div key={stat.label} className="bg-white rounded-lg border border-gray-100  shadow-sm p-5">
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.color}`}>
                   <stat.icon size={20} />
@@ -70,29 +71,29 @@ export default function AdminDashboard() {
         {/* Quick actions */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <button
-            onClick={() => navigate('/admin/elections')}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl p-5 text-left transition-colors"
-          >
-            <Vote size={24} className="mb-3" />
-            <p className="font-semibold">Manage Elections</p>
-            <p className="text-blue-100 text-sm mt-1">Create elections, add positions, open and close voting</p>
-          </button>
-          <button
-            onClick={() => navigate('/admin/candidates')}
-            className="bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-5 text-left transition-colors"
-          >
-            <Users size={24} className="mb-3 text-gray-600" />
-            <p className="font-semibold text-gray-900">Manage Candidates</p>
-            <p className="text-gray-500 text-sm mt-1">Review and approve candidate applications</p>
-          </button>
-          <button
-            onClick={() => navigate('/admin/users')}
-            className="bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-5 text-left transition-colors"
-          >
-            <Users size={24} className="mb-3 text-gray-600" />
-            <p className="font-semibold text-gray-900">Manage Users</p>
-            <p className="text-gray-500 text-sm mt-1">Verify students and manage voter eligibility</p>
-          </button>
+  onClick={() => navigate('/admin/elections')}
+  className="bg-[#1e3a5f] hover:bg-[#162d4a] text-white rounded-lg p-5 text-left transition-colors"
+>
+  <Vote size={22} className="mb-3 text-[#c9a84c]" />
+  <p className="font-semibold text-sm">Manage Elections</p>
+  <p className="text-blue-200 text-xs mt-1">Create elections, add positions, open and close voting</p>
+</button>
+<button
+  onClick={() => navigate('/admin/candidates')}
+  className="bg-white hover:bg-gray-50 border border-gray-200 shadow-sm rounded-lg p-5 text-left transition-colors"
+>
+  <Users size={22} className="mb-3 text-[#1e3a5f]" />
+  <p className="font-semibold text-sm text-gray-900">Manage Candidates</p>
+  <p className="text-gray-500 text-xs mt-1">Review and approve candidate applications</p>
+</button>
+<button
+  onClick={() => navigate('/admin/users')}
+  className="bg-white hover:bg-gray-50 border border-gray-200 shadow-sm rounded-lg p-5 text-left transition-colors"
+>
+  <Users size={22} className="mb-3 text-[#1e3a5f]" />
+  <p className="font-semibold text-sm text-gray-900">Manage Users</p>
+  <p className="text-gray-500 text-xs mt-1">Verify students and manage voter eligibility</p>
+</button>
         </div>
 
         {/* Elections list */}
@@ -104,7 +105,7 @@ export default function AdminDashboard() {
         ) : (
           <div className="grid gap-3">
             {elections.map((election) => (
-              <div key={election.id} className="bg-white rounded-xl border border-gray-100 p-5 flex items-center justify-between">
+              <div key={election.id} className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-1">
                     <h3 className="font-semibold text-gray-900">{election.title}</h3>

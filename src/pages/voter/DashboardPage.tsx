@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
 import { Vote, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 function StatusBadge({ status }: { status: Election['status'] }) {
   const config = {
@@ -55,24 +56,21 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-
+      <PageHeader
+        title={`Welcome, ${user?.first_name}`}
+        subtitle={`${user?.course} · Year ${user?.year_of_study} · ${user?.registration_number}`}
+        breadcrumb="Voter Portal"
+      />
       <div className="max-w-6xl mx-auto px-6 py-8">
-
-        {/* Welcome banner */}
-        <div className="bg-blue-600 rounded-2xl p-6 text-white mb-8">
-          <h1 className="text-2xl font-bold mb-1">Welcome, {user?.first_name} 👋</h1>
-          <p className="text-blue-100 text-sm">{user?.course} · Year {user?.year_of_study}</p>
-          {!user?.is_verified && (
-            <div className="mt-4 bg-yellow-400 text-yellow-900 rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2 w-fit">
+        {!user?.is_verified && (
+          <div className="bg-amber-50 border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800 flex items-center gap-2 mb-6">
               <AlertCircle size={16} />
-              Your account is pending verification by admin
-            </div>
-          )}
-        </div>
-
+                Your account is pending verification. Contact the electoral commission to activate your voting rights.
+          </div>
+        )}
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="bg-white rounded-xl p-5 border border-gray-100">
+          <div key="applications" className="bg-white rounded-lg p-5 border border-gray-100 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <Vote size={20} className="text-green-600" />
@@ -85,7 +83,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-5 border border-gray-100">
+          <div key="voted" className="bg-white rounded-lg p-5 border border-gray-100 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                 <CheckCircle size={20} className="text-blue-600" />
@@ -96,7 +94,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-5 border border-gray-100">
+          <div key="results" className="bg-white rounded-lg p-5 border border-gray-100 shadow-sm">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                 <Clock size={20} className="text-purple-600" />
@@ -121,7 +119,7 @@ export default function DashboardPage() {
         ) : (
           <div className="grid gap-4">
             {elections.map((election) => (
-              <div key={election.id} className="bg-white rounded-xl border border-gray-100 p-6 flex items-center justify-between">
+              <div key={election.id} className="bg-white rounded-lg border border-gray-100 shadow-sm p-5 flex items-center justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="font-semibold text-gray-900">{election.title}</h3>

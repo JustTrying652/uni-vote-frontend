@@ -12,60 +12,76 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white border-b border-gray-200 px-6 py-4">
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
-        <Link to={user?.role === 'admin' ? '/admin' : '/dashboard'} className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-            <span className="text-white text-xs font-bold">UV</span>
-          </div>
-          <span className="font-bold text-gray-900">UniVote</span>
-        </Link>
+    <nav className="bg-white border-b border-gray-200">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex items-center justify-between h-14">
 
-        <div className="flex items-center gap-6">
-          {user?.role === 'admin' ? (
-            <>
-              <Link to="/admin" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                <LayoutDashboard size={16} />
-                Dashboard
-              </Link>
-              <Link to="/admin/elections" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                <Vote size={16} />
-                Elections
-              </Link>
-              <Link to="/admin/candidates" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                <Settings size={16} />
-                Candidates
-              </Link>
-              <Link to="/admin/users" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors">
-                <Users size={16} />
-                Users
-              </Link>
-            </>
-          ) : (
-            <Link to="/dashboard" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-blue-600 transition-colors">
-              <LayoutDashboard size={16} />
-              Dashboard
-            </Link>
-          )}
-        </div>
+          {/* Logo */}
+          <Link to={user?.role === 'admin' ? '/admin' : '/dashboard'} className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#1e3a5f] rounded flex items-center justify-center flex-shrink-0">
+              <div className="w-1 h-4 bg-[#c9a84c] rounded-sm mr-0.5" />
+              <div className="flex flex-col gap-0.5">
+                <div className="w-3 h-0.5 bg-white rounded-sm" />
+                <div className="w-2 h-0.5 bg-white rounded-sm" />
+                <div className="w-2.5 h-0.5 bg-white rounded-sm" />
+              </div>
+            </div>
+            <div>
+              <span className="font-bold text-[#1e3a5f] text-sm tracking-wide">UniVote</span>
+              <span className="hidden sm:block text-xs text-gray-400 leading-none">Electoral System</span>
+            </div>
+          </Link>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-gray-900">{user?.full_name}</p>
-            <p className="text-xs text-gray-500">{user?.registration_number}</p>
+          {/* Nav links */}
+          <div className="flex items-center gap-1">
+            {user?.role === 'admin' ? (
+              <>
+                {[
+                  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+                  { to: '/admin/elections', label: 'Elections', icon: Vote },
+                  { to: '/admin/candidates', label: 'Candidates', icon: Settings },
+                  { to: '/admin/users', label: 'Users', icon: Users },
+                ].map(({ to, label, icon: Icon }) => (
+                  <Link
+                    key={to}
+                    to={to}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm text-gray-600 hover:text-[#1e3a5f] hover:bg-blue-50 transition-colors"
+                  >
+                    <Icon size={14} />
+                    <span className="hidden md:inline">{label}</span>
+                  </Link>
+                ))}
+              </>
+            ) : (
+              <Link
+                to="/dashboard"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm text-gray-600 hover:text-[#1e3a5f] hover:bg-blue-50 transition-colors"
+              >
+                <LayoutDashboard size={14} />
+                <span className="hidden md:inline">Dashboard</span>
+              </Link>
+            )}
           </div>
-          <div className="w-9 h-9 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-blue-600 font-semibold text-sm">
-              {user?.first_name?.[0]}{user?.last_name?.[0]}
-            </span>
+
+          {/* User info */}
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden sm:block">
+              <p className="text-xs font-semibold text-gray-800">{user?.full_name}</p>
+              <p className="text-xs text-gray-400">{user?.registration_number}</p>
+            </div>
+            <div className="w-8 h-8 bg-[#1e3a5f] rounded-full flex items-center justify-center">
+              <span className="text-white font-semibold text-xs">
+                {user?.first_name?.[0]}{user?.last_name?.[0]}
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <LogOut size={14} />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors"
-          >
-            <LogOut size={16} />
-            <span className="hidden sm:inline">Logout</span>
-          </button>
         </div>
       </div>
     </nav>

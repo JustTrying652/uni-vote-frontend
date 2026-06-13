@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
 import { ChevronLeft, Trophy } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 export default function ElectionPage() {
   const { id } = useParams()
@@ -42,6 +43,11 @@ export default function ElectionPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      <PageHeader
+        title={election?.title ?? ''}
+        subtitle={election?.academic_year}
+        breadcrumb="Voter Portal . Elections"
+      />
       <div className="max-w-3xl mx-auto px-6 py-8">
 
         <button
@@ -51,7 +57,7 @@ export default function ElectionPage() {
           <ChevronLeft size={16} /> Back to Dashboard
         </button>
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{election?.title}</h1>
@@ -82,7 +88,7 @@ export default function ElectionPage() {
               const winner = position.candidates.reduce((a: any, b: any) =>
                 a.votes > b.votes ? a : b, position.candidates[0])
               return (
-                <div key={i} className="bg-white rounded-2xl border border-gray-100 p-6">
+                <div key={i} className="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
                   <h3 className="font-semibold text-gray-900 mb-4">{position.position}</h3>
                   <div className="space-y-3">
                     {position.candidates
@@ -93,7 +99,7 @@ export default function ElectionPage() {
                           : 0
                         const isWinner = candidate.name === winner?.name
                         return (
-                          <div key={j} className={`rounded-xl p-4 ${isWinner ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50'}`}>
+                          <div key={j} className={`rounded-lg p-4 ${isWinner ? 'bg-yellow-50 border border-yellow-200' : 'bg-gray-50'}`}>
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 {isWinner && <Trophy size={16} className="text-yellow-500" />}
@@ -124,7 +130,7 @@ export default function ElectionPage() {
             })}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center text-gray-400">
+          <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-8 text-center text-gray-400">
             <p className="text-sm">Results will be published once the election is closed by the admin.</p>
           </div>
         )}

@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
 import { ChevronLeft, CheckCircle } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 export default function ApplyPage() {
   const { id } = useParams()
@@ -84,6 +85,11 @@ export default function ApplyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      <PageHeader
+        title="Apply as Candidate"
+        subtitle={`${election?.title} · ${election?.academic_year}`}
+        breadcrumb="Voter Portal . Candidacy"
+      />
       <div className="max-w-2xl mx-auto px-6 py-8">
 
         <button

@@ -117,7 +117,7 @@ export default function BallotPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f9fb]">
       <Navbar />
 
       <div className="max-w-2xl mx-auto px-6 py-8">
@@ -164,7 +164,7 @@ export default function BallotPage() {
         </div>
 
         {/* Ballot card */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">{currentPosition?.title}</h2>
             {currentPosition?.description && (

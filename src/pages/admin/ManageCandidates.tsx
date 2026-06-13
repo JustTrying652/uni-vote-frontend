@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
 import { CheckCircle, XCircle, User, ChevronDown } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 interface Candidate {
   id: number
@@ -93,14 +94,14 @@ export default function ManageCandidates() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f8f9fb]">
       <Navbar />
-      <div className="max-w-5xl mx-auto px-6 py-8">
-
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Manage Candidates</h1>
-          <p className="text-gray-500 text-sm mt-1">Review and approve candidate applications</p>
-        </div>
+        <PageHeader
+          title="Manage Candidates"
+          subtitle="Review and manage candidate applications for each election"
+          breadcrumb="Administration . Candidates"
+        />
+      <div className="max-w-6xl mx-auto px-6 py-8">
 
         {/* Election selector */}
         {elections.length > 1 && (

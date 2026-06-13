@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
 import { Plus } from 'lucide-react'
+import PageHeader from '../../components/PageHeader'
 
 const statusConfig: Record<string, { label: string; classes: string }> = {
   draft:                { label: 'Draft',                classes: 'bg-gray-100 text-gray-600' },
@@ -110,20 +111,20 @@ export default function ManageElections() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-5xl mx-auto px-6 py-8">
-
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Manage Elections</h1>
-            <p className="text-gray-500 text-sm mt-1">Create and control election lifecycle</p>
-          </div>
+      <PageHeader
+        title="Manage Elections"
+        subtitle="Create and control election lifecycle"
+        breadcrumb="Administration . Elections"
+        action={
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 bg-[#c9a84c] hover:bg-[#b8963e] text-white px-4 py-2 rounded text-sm font-medium transition-colors"
           >
-            <Plus size={16} /> New Election
+            <Plus size={15} /> New Election
           </button>
-        </div>
+        }
+      />
+      <div className="max-w-5xl mx-auto px-6 py-8">
 
         {/* Create election form */}
         {showForm && (
@@ -218,7 +219,7 @@ export default function ManageElections() {
         ) : (
           <div className="space-y-4">
             {elections.map((election) => (
-              <div key={election.id} className="bg-white rounded-2xl border border-gray-100 p-6">
+              <div key={election.id} className="bg-white rounded-lg border border-gray-100  shadow-sm p-6">
                 <div className="flex items-start justify-between mb-4">
   <div>
     <div className="flex items-center gap-3 mb-1">
