@@ -192,53 +192,67 @@ const handleConfirmVote = async () => {
           </div>
 
           {/* Candidates */}
-          <div className="space-y-3 mb-6">
-            {candidates.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center py-8">No approved candidates for this position.</p>
+<div className="space-y-3 mb-6">
+  {candidates.length === 0 ? (
+    <div className="text-center py-8">
+      <div className="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+        <svg className="w-6 h-6 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </div>
+      <p className="text-gray-500 text-sm font-medium">No approved candidates</p>
+      <p className="text-gray-400 text-xs mt-1">No one has been approved for this position yet.</p>
+      <button
+        onClick={() => currentStep < totalSteps - 1 ? setCurrentStep((s) => s + 1) : setSubmitted(true)}
+        className="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium underline underline-offset-2"
+      >
+        {currentStep < totalSteps - 1 ? 'Skip to next position' : 'Finish'}
+      </button>
+    </div>
+  ) : (
+    candidates.map((candidate) => {
+      const isSelected = selections[currentPosition.id] === candidate.id
+      return (
+        <button
+          key={candidate.id}
+          onClick={() => handleSelect(candidate.id)}
+          disabled={alreadyVoted}
+          className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
+            alreadyVoted
+              ? 'border-gray-100 cursor-default'
+              : isSelected
+              ? 'border-blue-500 bg-blue-50'
+              : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
+          }`}
+        >
+          <div className="flex items-center gap-4">
+            {candidate.photo ? (
+              <img
+                src={candidate.photo}
+                alt={candidate.user.full_name}
+                className="w-14 h-14 rounded-full object-cover"
+              />
             ) : (
-              candidates.map((candidate) => {
-                const isSelected = selections[currentPosition.id] === candidate.id
-                return (
-                  <button
-                    key={candidate.id}
-                    onClick={() => handleSelect(candidate.id)}
-                    disabled={alreadyVoted}
-                    className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
-                      alreadyVoted
-                        ? 'border-gray-100 cursor-default'
-                        : isSelected
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      {candidate.photo ? (
-                        <img
-                          src={candidate.photo}
-                          alt={candidate.user.full_name}
-                          className="w-14 h-14 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                          <User size={24} className="text-blue-500" />
-                        </div>
-                      )}
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{candidate.user.full_name}</p>
-                        <p className="text-xs text-gray-500">{candidate.user.registration_number} · {candidate.user.faculty.toUpperCase()}</p>
-                        <p className="text-sm text-gray-600 mt-1 line-clamp-2">{candidate.manifesto}</p>
-                      </div>
-                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                        isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
-                      }`}>
-                        {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
-                      </div>
-                    </div>
-                  </button>
-                )
-              })
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                <User size={24} className="text-blue-500" />
+              </div>
             )}
+            <div className="flex-1">
+              <p className="font-semibold text-gray-900">{candidate.user.full_name}</p>
+              <p className="text-xs text-gray-500">{candidate.user.registration_number} · {candidate.user.faculty.toUpperCase()}</p>
+              <p className="text-sm text-gray-600 mt-1 line-clamp-2">{candidate.manifesto}</p>
+            </div>
+            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+              isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
+            }`}>
+              {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+            </div>
           </div>
+        </button>
+      )
+    })
+  )}
+</div>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-4">

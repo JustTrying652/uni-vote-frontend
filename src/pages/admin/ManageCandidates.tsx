@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { Election } from '../../types'
-import { CheckCircle, XCircle, User, ChevronDown } from 'lucide-react'
+import { CheckCircle, XCircle, User} from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 
 interface Candidate {
@@ -104,23 +104,7 @@ export default function ManageCandidates() {
       <div className="max-w-6xl mx-auto px-6 py-8">
 
         {/* Election selector */}
-        {elections.length > 1 && (
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Select Election</label>
-            <div className="relative w-72">
-              <select
-                value={selectedElection ?? ''}
-                onChange={(e) => setSelectedElection(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-              >
-                {elections.map((e) => (
-                  <option key={e.id} value={e.id}>{e.title}</option>
-                ))}
-              </select>
-              <ChevronDown size={16} className="absolute right-3 top-3 text-gray-400 pointer-events-none" />
-            </div>
-          </div>
-        )}
+        
 
         {/* Stats */}
         {!loading && (
@@ -137,7 +121,40 @@ export default function ManageCandidates() {
             ))}
           </div>
         )}
-
+        {selectedElectionData && (
+  <div className="flex items-center gap-3 mb-6">
+    <h2 className="text-base font-semibold text-gray-900">{selectedElectionData.title}</h2>
+    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+      {
+        draft:                'bg-gray-100 text-gray-600',
+        applications_open:    'bg-blue-100 text-blue-700',
+        applications_closed:  'bg-purple-100 text-purple-700',
+        voting_open:          'bg-green-100 text-green-700',
+        voting_closed:        'bg-yellow-100 text-yellow-700',
+        results:              'bg-orange-100 text-orange-700',
+      }[selectedElectionData.status]
+    }`}>
+      {{
+        draft:                'Draft',
+        applications_open:    'Applications Open',
+        applications_closed:  'Applications Closed',
+        voting_open:          'Voting Open',
+        voting_closed:        'Voting Closed',
+        results:              'Results Published',
+      }[selectedElectionData.status]}
+    </span>
+    {selectedElectionData.status === 'applications_open' && (
+      <span className="text-xs text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+        Applications are open — new candidates may apply
+      </span>
+    )}
+    {selectedElectionData.status === 'voting_open' && (
+      <span className="text-xs text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
+        Voting is live
+      </span>
+    )}
+  </div>
+)}
         {/* Candidates by position */}
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading...</div>
