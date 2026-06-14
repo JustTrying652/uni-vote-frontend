@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   const [elections, setElections] = useState<Election[]>([])
   const [loading, setLoading] = useState(true)
 
+  
   useEffect(() => {
     api.get('/elections/').then((res) => {
       setElections(res.data)
@@ -92,6 +93,13 @@ export default function AdminDashboard() {
     desc: 'Verify students and manage voter eligibility',
     primary: false,
   },
+  {
+  to: '/admin/turnout',
+  icon: BarChart3,
+  label: 'Voter Turnout',
+  desc: 'View participation breakdown by faculty and year',
+  primary: false,
+},
 ].map(({ to, icon: Icon, label, desc, primary }) => (
   <button
     key={to}

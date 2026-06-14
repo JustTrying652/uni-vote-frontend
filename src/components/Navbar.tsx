@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
-import { LogOut, Vote, LayoutDashboard, Settings, Users } from 'lucide-react'
+import { LogOut, Vote, LayoutDashboard, Settings, Users, BarChart3 } from 'lucide-react'
 
 export default function Navbar() {
   const { user, logout } = useAuthStore()
@@ -41,6 +41,7 @@ export default function Navbar() {
                   { to: '/admin/elections', label: 'Elections', icon: Vote },
                   { to: '/admin/candidates', label: 'Candidates', icon: Settings },
                   { to: '/admin/users', label: 'Users', icon: Users },
+                  { to: '/admin/turnout', label: 'Turnout', icon: BarChart3 },
                 ].map(({ to, label, icon: Icon }) => (
                   <Link
                     key={to}

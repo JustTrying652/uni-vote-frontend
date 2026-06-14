@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import ManageUsers from './pages/admin/ManageUsers'
 import ApplyPage from './pages/voter/ApplyPage'
 import LandingPage from './pages/LandingPage'
+import TurnoutPage from './pages/admin/TurnoutPage'
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/admin/elections" element={<ProtectedRoute adminOnly><ManageElections /></ProtectedRoute>} />
         <Route path="/admin/candidates" element={<ProtectedRoute adminOnly><ManageCandidates /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute adminOnly><ManageUsers /></ProtectedRoute>} />
+        <Route path="/admin/turnout" element={<ProtectedRoute adminOnly><TurnoutPage /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   )
