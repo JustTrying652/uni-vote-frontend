@@ -133,7 +133,7 @@ const handleConfirmVote = async () => {
     <div className="min-h-screen bg-[#f8f9fb]">
       <Navbar />
 
-      <div className="max-w-2xl mx-auto px-6 py-8">
+      <div className="max-w-2xl mx-auto px-4 py-6">
 
         {/* Header */}
         <div className="mb-6">
@@ -177,7 +177,7 @@ const handleConfirmVote = async () => {
         </div>
 
         {/* Ballot card */}
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-6">
+        <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 sm:p-6">
           <div className="mb-6">
             <h2 className="text-xl font-bold text-gray-900">{currentPosition?.title}</h2>
             {currentPosition?.description && (
@@ -225,27 +225,27 @@ const handleConfirmVote = async () => {
               : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
           }`}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {candidate.photo ? (
               <img
                 src={candidate.photo}
                 alt={candidate.user.full_name}
-                className="w-14 h-14 rounded-full object-cover"
+                className="w-10 h-10 sm:w-14 sm:h-14 rounded-full object-cover flex-shrink-0"
               />
             ) : (
-              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                <User size={24} className="text-blue-500" />
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <User size={20} className="text-blue-500" />
               </div>
             )}
-            <div className="flex-1">
-              <p className="font-semibold text-gray-900">{candidate.user.full_name}</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900 text-sm">{candidate.user.full_name}</p>
               <p className="text-xs text-gray-500">{candidate.user.registration_number} · {candidate.user.faculty.toUpperCase()}</p>
               <p className="text-sm text-gray-600 mt-1 line-clamp-2">{candidate.manifesto}</p>
             </div>
-            <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
               isSelected ? 'border-blue-500 bg-blue-500' : 'border-gray-300'
             }`}>
-              {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+              {isSelected && <div className="w-2 h-2 bg-white rounded-full" />}
             </div>
           </div>
         </button>

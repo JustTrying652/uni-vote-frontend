@@ -97,7 +97,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right panel */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#f8f9fb]">
+      <div className="w-full lg:w-1/2 flex items-center justify-center min-h-screen p-6 bg-[#f8f9fb]">
         <div className="w-full max-w-sm">
 
           {/* Mobile logo */}

@@ -176,60 +176,63 @@ export default function ManageCandidates() {
                   ) : (
                     <div className="space-y-3">
                       {candidates.map((candidate) => (
-                        <div key={candidate.id} className="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
-                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            {candidate.photo ? (
-                              <img src={candidate.photo} className="w-12 h-12 rounded-full object-cover" />
-                            ) : (
-                              <User size={20} className="text-blue-500" />
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <p className="font-medium text-gray-900">{candidate.user.full_name}</p>
-                              {statusBadge(candidate.status)}
-                            </div>
-                            <p className="text-xs text-gray-500 mb-2">
-                              {candidate.user.registration_number} · {candidate.user.faculty.toUpperCase()}
-                            </p>
-                            <p className="text-sm text-gray-600 line-clamp-2">{candidate.manifesto}</p>
-                            <p className="text-xs text-gray-400 mt-1">
-                              Applied {new Date(candidate.applied_at).toLocaleDateString()}
-                            </p>
-                          </div>
+                        <div key={candidate.id} className="flex flex-col sm:flex-row items-start gap-4 p-4 rounded-xl bg-gray-50">
+  <div className="flex items-start gap-3 flex-1 min-w-0">
+    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+      {candidate.photo ? (
+        <img src={candidate.photo} className="w-12 h-12 rounded-full object-cover" />
+      ) : (
+        <User size={20} className="text-blue-500" />
+      )}
+    </div>
+    <div className="flex-1 min-w-0">
+      <div className="flex flex-wrap items-center gap-2 mb-1">
+        <p className="font-medium text-gray-900">{candidate.user.full_name}</p>
+        {statusBadge(candidate.status)}
+      </div>
+      <p className="text-xs text-gray-500 mb-2">
+        {candidate.user.registration_number} · {candidate.user.faculty.toUpperCase()}
+      </p>
+      <p className="text-sm text-gray-600 line-clamp-2">{candidate.manifesto}</p>
+      <p className="text-xs text-gray-400 mt-1">
+        Applied {new Date(candidate.applied_at).toLocaleDateString()}
+      </p>
+    </div>
+  </div>
 
-                          {candidate.status === 'pending' && (
-                            <div className="flex gap-2 flex-shrink-0">
-                              <button
-                                onClick={() => handleApproval(candidate.id, 'approve')}
-                                disabled={actionLoading === candidate.id}
-                                className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                              >
-                                <CheckCircle size={14} />
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => handleApproval(candidate.id, 'reject')}
-                                disabled={actionLoading === candidate.id}
-                                className="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-                              >
-                                <XCircle size={14} />
-                                Reject
-                              </button>
-                            </div>
-                          )}
-
-                          {candidate.status === 'approved' && (
-                            <button
-                              onClick={() => handleApproval(candidate.id, 'reject')}
-                              disabled={actionLoading === candidate.id}
-                              className="flex items-center gap-1.5 bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-500 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex-shrink-0"
-                            >
-                              <XCircle size={14} />
-                              Revoke
-                            </button>
-                          )}
-                        </div>
+  <div className="flex gap-2 sm:flex-col ml-15 sm:ml-0">
+    {candidate.status === 'pending' && (
+      <>
+        <button
+          onClick={() => handleApproval(candidate.id, 'approve')}
+          disabled={actionLoading === candidate.id}
+          className="flex items-center gap-1.5 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+        >
+          <CheckCircle size={14} />
+          Approve
+        </button>
+        <button
+          onClick={() => handleApproval(candidate.id, 'reject')}
+          disabled={actionLoading === candidate.id}
+          className="flex items-center gap-1.5 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+        >
+          <XCircle size={14} />
+          Reject
+        </button>
+      </>
+    )}
+    {candidate.status === 'approved' && (
+      <button
+        onClick={() => handleApproval(candidate.id, 'reject')}
+        disabled={actionLoading === candidate.id}
+        className="flex items-center gap-1.5 bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-500 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
+      >
+        <XCircle size={14} />
+        Revoke
+      </button>
+    )}
+  </div>
+</div>
                       ))}
                     </div>
                   )}

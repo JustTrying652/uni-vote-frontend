@@ -263,43 +263,43 @@ const handleDeletePosition = async (positionId: number, title: string) => {
           <div className="space-y-4">
             {elections.map((election) => (
               <div key={election.id} className="bg-white rounded-lg border border-gray-100  shadow-sm p-6">
-                <div className="flex items-start justify-between mb-4">
-  <div>
-    <div className="flex items-center gap-3 mb-1">
+               <div className="flex flex-col sm:flex-row sm:items-start justify-between mb-4 gap-3">
+  <div className="flex-1 min-w-0">
+    <div className="flex flex-wrap items-center gap-2 mb-1">
       <h3 className="font-semibold text-gray-900">{election.title}</h3>
       <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusConfig[election.status]?.classes}`}>
         {statusConfig[election.status]?.label}
       </span>
     </div>
     <p className="text-sm text-gray-500">{election.description}</p>
-    <div className="flex gap-4 text-xs text-gray-400 mt-2">
+    <div className="flex flex-wrap gap-3 text-xs text-gray-400 mt-2">
       <span>{election.positions.length} positions</span>
       <span>{election.total_voters} voters</span>
-      <span>{new Date(election.start_time).toLocaleString()} → {new Date(election.end_time).toLocaleString()}</span>
+      <span>{new Date(election.start_time).toLocaleDateString()} → {new Date(election.end_time).toLocaleDateString()}</span>
     </div>
   </div>
-  <div className="flex gap-2 flex-shrink-0">
+  <div className="flex flex-wrap gap-2 flex-shrink-0">
+    {['draft', 'applications_open'].includes(election.status) && (
+      <button
+        onClick={() => handleEditClick(election)}
+        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
+      >
+        Edit
+      </button>
+    )}
     {['draft', 'applications_open', 'applications_closed'].includes(election.status) && (
       <button
         onClick={() => handleDelete(election.id, election.title)}
-        className="px-3 py-2 rounded-lg text-sm font-medium bg-red-50 hover:bg-red-100 text-red-600 transition-colors"
+        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-red-50 hover:bg-red-100 text-red-600 transition-colors"
       >
         Delete
       </button>
     )}
-    {['draft', 'applications_open'].includes(election.status) && (
-  <button
-    onClick={() => handleEditClick(election)}
-    className="px-3 py-2 rounded-lg text-sm font-medium bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
-  >
-    Edit
-  </button>
-)}
     {nextAction[election.status] && (
       <button
         onClick={() => handleStatusChange(election.id, nextAction[election.status]!.action)}
         disabled={actionLoading === election.id}
-        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${nextAction[election.status]!.classes}`}
+        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${nextAction[election.status]!.classes}`}
       >
         {actionLoading === election.id ? 'Processing...' : nextAction[election.status]!.label}
       </button>

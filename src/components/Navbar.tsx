@@ -33,7 +33,7 @@ export default function Navbar() {
           </Link>
 
           {/* Nav links */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 overflow-x-auto">
             {user?.role === 'admin' ? (
               <>
                 {[
@@ -46,9 +46,9 @@ export default function Navbar() {
                   <Link
                     key={to}
                     to={to}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm text-gray-600 hover:text-[#1e3a5f] hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-1 px-2 py-1.5 rounded text-sm text-gray-600 hover:text-[#1e3a5f] hover:bg-blue-50 transition-colors whitespace-nowrap"
                   >
-                    <Icon size={14} />
+                    <Icon size={13} />
                     <span className="hidden md:inline">{label}</span>
                   </Link>
                 ))}
@@ -56,7 +56,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/dashboard"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded text-sm text-gray-600 hover:text-[#1e3a5f] hover:bg-blue-50 transition-colors"
+                className="flex items-center gap-1.5 px-2 py-1.5 rounded text-sm text-gray-600 hover:text-[#1e3a5f] hover:bg-blue-50 transition-colors"
               >
                 <LayoutDashboard size={14} />
                 <span className="hidden md:inline">Dashboard</span>
@@ -65,19 +65,19 @@ export default function Navbar() {
           </div>
 
           {/* User info */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="text-right hidden sm:block">
               <p className="text-xs font-semibold text-gray-800">{user?.full_name}</p>
               <p className="text-xs text-gray-400">{user?.registration_number}</p>
             </div>
-            <div className="w-8 h-8 bg-[#1e3a5f] rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-[#1e3a5f] rounded-full flex items-center justify-center flex-shrink-0">
               <span className="text-white font-semibold text-xs">
                 {user?.first_name?.[0]}{user?.last_name?.[0]}
               </span>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors"
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
             >
               <LogOut size={14} />
               <span className="hidden sm:inline">Logout</span>

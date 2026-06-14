@@ -130,7 +130,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Right panel */}
-      <div className="w-full lg:w-3/5 flex items-center justify-center p-8 bg-[#f8f9fb]">
+      <div className="w-full lg:w-3/5 flex items-center justify-center min-h-screen p-6 bg-[#f8f9fb]">
         <div className="w-full max-w-lg">
 
           <Link to="/" className="flex items-center gap-2 mb-6 lg:hidden">

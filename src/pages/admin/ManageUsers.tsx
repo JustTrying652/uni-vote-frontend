@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Navbar from '../../components/Navbar'
 import api from '../../api/axios'
 import type { User } from '../../types'
-import { CheckCircle, XCircle, User as  Search, Filter } from 'lucide-react'
+import { CheckCircle, XCircle, Search, Filter } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 
 export default function ManageUsers() {
@@ -116,7 +116,7 @@ export default function ManageUsers() {
         ) : filtered.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No users found.</div>
         ) : (
-          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100 bg-gray-50">
