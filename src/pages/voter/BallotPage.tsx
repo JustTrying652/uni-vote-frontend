@@ -11,6 +11,7 @@ export default function BallotPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
+  const [pendingVote, setPendingVote] = useState<{ candidateId: number; candidateName: string; positionTitle: string } | null>(null)
   const [election, setElection] = useState<Election | null>(null)
   const [candidatesByPosition, setCandidatesByPosition] = useState<Record<number, Candidate[]>>({})
   const [selections, setSelections] = useState<SelectionMap>({})
@@ -61,28 +62,40 @@ export default function BallotPage() {
     setSelections((prev) => ({ ...prev, [currentPosition.id]: candidateId }))
   }
 
-  const handleSubmitVote = async () => {
-    if (!currentPosition || !selections[currentPosition.id]) return
-    setSubmitting(true)
-    setError('')
-    try {
-      await api.post('/elections/vote/', {
-        position: currentPosition.id,
-        candidate: selections[currentPosition.id],
-      })
-      setVotedPositions((prev) => [...prev, currentPosition.id])
+  const handleVoteClick = () => {
+  if (!currentPosition || !selections[currentPosition.id]) return
+  const candidate = candidates.find((c) => c.id === selections[currentPosition.id])
+  if (!candidate) return
+  setPendingVote({
+    candidateId: candidate.id,
+    candidateName: candidate.user.full_name,
+    positionTitle: currentPosition.title,
+  })
+}
 
-      if (currentStep < totalSteps - 1) {
-        setCurrentStep((s) => s + 1)
-      } else {
-        setSubmitted(true)
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.non_field_errors?.[0] || 'Failed to cast vote. Try again.')
-    } finally {
-      setSubmitting(false)
+const handleConfirmVote = async () => {
+  if (!pendingVote || !currentPosition) return
+  setSubmitting(true)
+  setError('')
+  try {
+    await api.post('/elections/vote/', {
+      position: currentPosition.id,
+      candidate: pendingVote.candidateId,
+    })
+    setVotedPositions((prev) => [...prev, currentPosition.id])
+    setPendingVote(null)
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep((s) => s + 1)
+    } else {
+      setSubmitted(true)
     }
+  } catch (err: any) {
+    setError(err.response?.data?.non_field_errors?.[0] || 'Failed to cast vote. Try again.')
+    setPendingVote(null)
+  } finally {
+    setSubmitting(false)
   }
+}
 
   if (loading) {
     return (
@@ -273,7 +286,7 @@ export default function BallotPage() {
           </button>
         )}
         <button
-          onClick={handleSubmitVote}
+          onClick={handleVoteClick}
           disabled={!selections[currentPosition?.id] || submitting}
           className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-colors"
         >
@@ -286,6 +299,41 @@ export default function BallotPage() {
 </div>
         </div>
       </div>
+      {/* Confirmation modal */}
+{pendingVote && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6">
+      <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 100 18A9 9 0 0012 3z" />
+        </svg>
+      </div>
+      <h3 className="text-lg font-bold text-gray-900 text-center mb-1">Confirm Your Vote</h3>
+      <p className="text-gray-500 text-sm text-center mb-6">This action cannot be undone.</p>
+
+      <div className="bg-[#f8f9fb] rounded-xl p-4 mb-6 border-l-4 border-[#1e3a5f]">
+        <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">{pendingVote.positionTitle}</p>
+        <p className="font-bold text-[#1e3a5f]">{pendingVote.candidateName}</p>
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => setPendingVote(null)}
+          className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 rounded-lg text-sm font-medium transition-colors"
+        >
+          Go Back
+        </button>
+        <button
+          onClick={handleConfirmVote}
+          disabled={submitting}
+          className="flex-1 bg-[#1e3a5f] hover:bg-[#162d4a] disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-medium transition-colors"
+        >
+          {submitting ? 'Submitting...' : 'Confirm Vote'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }
