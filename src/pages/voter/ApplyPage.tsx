@@ -7,6 +7,7 @@ import { ChevronLeft, CheckCircle } from 'lucide-react'
 import PageHeader from '../../components/PageHeader'
 
 export default function ApplyPage() {
+  
   const { id } = useParams()
   const navigate = useNavigate()
   const [election, setElection] = useState<Election | null>(null)
@@ -18,13 +19,14 @@ export default function ApplyPage() {
   const [error, setError] = useState('')
   const [myApplications, setMyApplications] = useState<number[]>([]) // position ids already applied
 
+  const hasAppliedInElection = myApplications.length > 0
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await api.get(`/elections/${id}/`)
         setElection(res.data)
         // fetch my existing applications
-        const appsRes = await api.get('/elections/my-applications/')
+        const appsRes = await api.get(`/elections/my-applications/?election_id=${id}`)
         setMyApplications(appsRes.data.position_ids)
       } catch (err) {
         console.error(err)
@@ -99,10 +101,7 @@ export default function ApplyPage() {
           <ChevronLeft size={16} /> Back to Dashboard
         </button>
 
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Apply as Candidate</h1>
-          <p className="text-gray-500 text-sm mt-1">{election?.title} · {election?.academic_year}</p>
-        </div>
+        
 
         {loading ? (
           <div className="text-center py-16 text-gray-400">Loading...</div>
@@ -110,6 +109,12 @@ export default function ApplyPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* Position selector */}
+            {hasAppliedInElection && (
+  <div className="bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm flex items-center gap-2 mb-4">
+    <CheckCircle size={16} />
+    You have already submitted an application for this election. Only one position per election is allowed.
+  </div>
+)}
             <div className="bg-white rounded-2xl border border-gray-100 p-6">
               <h2 className="font-semibold text-gray-900 mb-4">Select a Position</h2>
               <div className="space-y-3">
@@ -117,18 +122,20 @@ export default function ApplyPage() {
                   const alreadyApplied = myApplications.includes(position.id)
                   return (
                     <button
-                      key={position.id}
-                      type="button"
-                      disabled={alreadyApplied}
-                      onClick={() => setSelectedPosition(position.id)}
-                      className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
-                        alreadyApplied
-                          ? 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-60'
-                          : selectedPosition === position.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
-                      }`}
-                    >
+  key={position.id}
+  type="button"
+  disabled={hasAppliedInElection && !myApplications.includes(position.id)}
+  onClick={() => !hasAppliedInElection ? setSelectedPosition(position.id) : null}
+  className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
+    myApplications.includes(position.id)
+      ? 'border-green-200 bg-green-50 cursor-default'
+      : hasAppliedInElection
+      ? 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-50'
+      : selectedPosition === position.id
+      ? 'border-blue-500 bg-blue-50'
+      : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
+  }`}
+>
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium text-gray-900">{position.title}</p>
