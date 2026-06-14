@@ -35,6 +35,12 @@ export default function ManageElections() {
   const [showForm, setShowForm] = useState(false)
   const [showPositionForm, setShowPositionForm] = useState<number | null>(null)
   const [actionLoading, setActionLoading] = useState<number | null>(null)
+  const [editingElection, setEditingElection] = useState<Election | null>(null)
+  const [editForm, setEditForm] = useState({
+    title: '', description: '', academic_year: '', start_time: '', end_time: ''
+  })
+  const [editLoading, setEditLoading] = useState(false)
+  const [editError, setEditError] = useState('')
 
   const [form, setForm] = useState({
     title: '', description: '', academic_year: '', start_time: '', end_time: ''
@@ -116,6 +122,33 @@ const handleDeletePosition = async (positionId: number, title: string) => {
     fetchElections()
   } catch (err: any) {
     alert(err.response?.data?.error || 'Failed to delete position.')
+  }
+}
+  const handleEditClick = (election: Election) => {
+  setEditingElection(election)
+  setEditForm({
+    title: election.title,
+    description: election.description,
+    academic_year: election.academic_year,
+    start_time: new Date(election.start_time).toISOString().slice(0, 16),
+    end_time: new Date(election.end_time).toISOString().slice(0, 16),
+  })
+  setEditError('')
+}
+  const handleEditSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (!editingElection) return
+  setEditLoading(true)
+  setEditError('')
+  try {
+    await api.patch(`/elections/${editingElection.id}/edit/`, editForm)
+    setEditingElection(null)
+    fetchElections()
+  } catch (err: any) {
+    const data = err.response?.data
+    setEditError(data?.error || Object.values(data).flat().join(' ') || 'Failed to update election.')
+  } finally {
+    setEditLoading(false)
   }
 }
   return (
@@ -254,6 +287,14 @@ const handleDeletePosition = async (positionId: number, title: string) => {
         Delete
       </button>
     )}
+    {['draft', 'applications_open'].includes(election.status) && (
+  <button
+    onClick={() => handleEditClick(election)}
+    className="px-3 py-2 rounded-lg text-sm font-medium bg-blue-50 hover:bg-blue-100 text-blue-600 transition-colors"
+  >
+    Edit
+  </button>
+)}
     {nextAction[election.status] && (
       <button
         onClick={() => handleStatusChange(election.id, nextAction[election.status]!.action)}
@@ -341,6 +382,97 @@ const handleDeletePosition = async (positionId: number, title: string) => {
           </div>
         )}
       </div>
+      {/* Edit modal */}
+{editingElection && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
+      <h2 className="font-bold text-[#1e3a5f] text-lg mb-1">Edit Election</h2>
+      <p className="text-gray-500 text-sm mb-6">Update election details below.</p>
+
+      {editError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm mb-4">
+          {editError}
+        </div>
+      )}
+
+      <form onSubmit={handleEditSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Title</label>
+            <input
+              type="text"
+              value={editForm.title}
+              onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Academic Year</label>
+            <input
+              type="text"
+              value={editForm.academic_year}
+              onChange={(e) => setEditForm({ ...editForm, academic_year: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              required
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Description</label>
+          <textarea
+            value={editForm.description}
+            onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+            rows={2}
+            className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+            required
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">Start Time</label>
+            <input
+              type="datetime-local"
+              value={editForm.start_time}
+              onChange={(e) => setEditForm({ ...editForm, start_time: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5">End Time</label>
+            <input
+              type="datetime-local"
+              value={editForm.end_time}
+              onChange={(e) => setEditForm({ ...editForm, end_time: e.target.value })}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1e3a5f]"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <button
+            type="submit"
+            disabled={editLoading}
+            className="bg-[#1e3a5f] hover:bg-[#162d4a] disabled:opacity-50 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            {editLoading ? 'Saving...' : 'Save Changes'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setEditingElection(null)}
+            className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2.5 rounded-lg text-sm font-medium transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   )
 }
