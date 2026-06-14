@@ -100,14 +100,24 @@ export default function ManageElections() {
     }
   }
   const handleDelete = async (electionId: number, title: string) => {
-    if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
-    try {
-      await api.delete(`/elections/${electionId}/delete/`)
-      fetchElections()
-    } catch (err: any) {
-      alert(err.response?.data?.error || 'Failed to delete election.')
-    }
+  if (!window.confirm(`Delete "${title}"? This cannot be undone.`)) return
+  try {
+    await api.delete(`/elections/${electionId}/delete/`)
+    fetchElections()
+  } catch (err: any) {
+    alert(err.response?.data?.error || 'Failed to delete election.')
   }
+} // ← this closing brace was missing, causing handleDeletePosition to be inside handleDelete
+
+const handleDeletePosition = async (positionId: number, title: string) => {
+  if (!window.confirm(`Delete position "${title}"? This cannot be undone.`)) return
+  try {
+    await api.delete(`/elections/positions/${positionId}/delete/`)
+    fetchElections()
+  } catch (err: any) {
+    alert(err.response?.data?.error || 'Failed to delete position.')
+  }
+}
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -259,17 +269,26 @@ export default function ManageElections() {
 
                 {/* Positions */}
                 {election.positions.length > 0 && (
-                  <div className="border-t border-gray-100 pt-4 mb-4">
-                    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Positions</p>
-                    <div className="flex flex-wrap gap-2">
-                      {election.positions.map((p) => (
-                        <span key={p.id} className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
-                          {p.title}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
+  <div className="border-t border-gray-100 pt-4 mb-4">
+    <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Positions</p>
+    <div className="flex flex-wrap gap-2">
+      {election.positions.map((p) => (
+        <div key={p.id} className="flex items-center gap-1.5 bg-gray-100 rounded-full pl-3 pr-1.5 py-1">
+          <span className="text-xs text-gray-700">{p.title}</span>
+          {['draft', 'applications_open'].includes(election.status) && (
+            <button
+              onClick={() => handleDeletePosition(p.id, p.title)}
+              className="w-4 h-4 bg-gray-300 hover:bg-red-400 hover:text-white text-gray-500 rounded-full flex items-center justify-center transition-colors text-xs leading-none"
+              title="Delete position"
+            >
+              ×
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
                 {/* Add position */}
                 {election.status === 'draft' && (
