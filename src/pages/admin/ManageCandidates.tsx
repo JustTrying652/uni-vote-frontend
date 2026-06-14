@@ -104,8 +104,49 @@ export default function ManageCandidates() {
       <div className="max-w-6xl mx-auto px-6 py-8">
 
         {/* Election selector */}
-        
-
+<div className="mb-6">
+  <label className="block text-sm font-medium text-gray-700 mb-2">Select Election</label>
+  <div className="flex flex-wrap gap-2">
+    {elections.map((e) => {
+      const statusColors: Record<string, string> = {
+        draft:                'bg-gray-100 text-gray-600',
+        applications_open:    'bg-blue-100 text-blue-700',
+        applications_closed:  'bg-purple-100 text-purple-700',
+        voting_open:          'bg-green-100 text-green-700',
+        voting_closed:        'bg-yellow-100 text-yellow-700',
+        results:              'bg-orange-100 text-orange-700',
+      }
+      const statusLabels: Record<string, string> = {
+        draft:                'Draft',
+        applications_open:    'Applications Open',
+        applications_closed:  'Applications Closed',
+        voting_open:          'Voting Open',
+        voting_closed:        'Voting Closed',
+        results:              'Results Published',
+      }
+      return (
+        <button
+          key={e.id}
+          onClick={() => setSelectedElection(e.id)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
+            selectedElection === e.id
+              ? 'bg-[#1e3a5f] text-white border-[#1e3a5f]'
+              : 'bg-white text-gray-700 border-gray-200 hover:border-[#1e3a5f]'
+          }`}
+        >
+          {e.title}
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+            selectedElection === e.id
+              ? 'bg-white/20 text-white'
+              : statusColors[e.status]
+          }`}>
+            {statusLabels[e.status]}
+          </span>
+        </button>
+      )
+    })}
+  </div>
+</div>
         {/* Stats */}
         {!loading && (
           <div className="grid grid-cols-3 gap-4 mb-8">
