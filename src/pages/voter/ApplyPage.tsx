@@ -18,6 +18,8 @@ export default function ApplyPage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [myApplications, setMyApplications] = useState<number[]>([]) // position ids already applied
+  const [photo, setPhoto] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 
   const hasAppliedInElection = myApplications.length > 0
   useEffect(() => {
@@ -38,27 +40,41 @@ export default function ApplyPage() {
   }, [id])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedPosition) return
-    setError('')
-    setSubmitting(true)
-    try {
-      await api.post('/elections/candidates/apply/', {
-        position: selectedPosition,
-        manifesto,
-      })
-      setSuccess(true)
-    } catch (err: any) {
-      const data = err.response?.data
-      setError(
-        data?.non_field_errors?.[0] ||
-        data?.position?.[0] ||
-        data?.manifesto?.[0] ||
-        'Failed to submit application.'
-      )
-    } finally {
-      setSubmitting(false)
+  e.preventDefault()
+  if (!selectedPosition) return
+  setError('')
+  setSubmitting(true)
+  try {
+    const formData = new FormData()
+    formData.append('position', String(selectedPosition))
+    formData.append('manifesto', manifesto)
+    if (photo) formData.append('photo', photo)
+
+    await api.post('/elections/candidates/apply/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    setSuccess(true)
+  } catch (err: any) {
+    const data = err.response?.data
+    setError(
+      data?.non_field_errors?.[0] ||
+      data?.position?.[0] ||
+      data?.manifesto?.[0] ||
+      'Failed to submit application.'
+    )
+  } finally {
+    setSubmitting(false)
+  }
+}
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 2 * 1024 * 1024) {
+      setError('Photo must be under 2MB.')
+      return
     }
+    setPhoto(file)
+    setPhotoPreview(URL.createObjectURL(file))
   }
 
   if (success) {
@@ -182,7 +198,53 @@ export default function ApplyPage() {
                 <p className="text-xs text-gray-400 mt-1">{manifesto.length} characters · minimum 50</p>
               </div>
             )}
+            {selectedPosition && (
+  <div className="bg-white rounded-2xl border border-gray-100 p-6">
+    <h2 className="font-semibold text-gray-900 mb-1">Campaign Photo</h2>
+    <p className="text-sm text-gray-500 mb-4">
+      Upload a clear photo of yourself. This will appear on the ballot. Max 2MB.
+    </p>
 
+    <div className="flex items-center gap-6">
+      {/* Preview */}
+      <div className="w-20 h-20 rounded-full bg-gray-100 border-2 border-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center">
+        {photoPreview ? (
+          <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
+        ) : (
+          <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        )}
+      </div>
+
+      <div className="flex-1">
+        <label className="cursor-pointer">
+          <div className="border-2 border-dashed border-gray-300 hover:border-[#1e3a5f] rounded-lg px-4 py-3 text-center transition-colors">
+            <p className="text-sm font-medium text-gray-700">
+              {photo ? photo.name : 'Click to upload photo'}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">PNG, JPG up to 2MB</p>
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
+        </label>
+        {photo && (
+          <button
+            type="button"
+            onClick={() => { setPhoto(null); setPhotoPreview(null) }}
+            className="text-xs text-red-500 hover:text-red-600 mt-2 transition-colors"
+          >
+            Remove photo
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+)}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
                 {error}
