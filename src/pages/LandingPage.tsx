@@ -205,7 +205,7 @@ export default function LandingPage() {
             </div>
             <span className="text-xs font-bold text-[#1e3a5f]">UniVote</span>
           </div>
-          <p className="text-xs text-gray-400">© 2026 UniVote. Secure student elections.</p>
+          <p className="text-xs text-gray-400">© 2026 UniVote. Built by Me Bomba. Secure student elections.</p>
         </div>
       </footer>
     </div>
