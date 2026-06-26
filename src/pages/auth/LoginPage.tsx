@@ -57,7 +57,7 @@ export default function LoginPage() {
             </div>
           </div>
           <div>
-            <p className="font-bold text-white text-sm">UniVote</p>
+            <p className="font-bold text-white text-sm"></p>
             <p className="text-blue-300 text-xs">Electoral System</p>
           </div>
         </Link>
